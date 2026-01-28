@@ -1,0 +1,20 @@
+.booking-history {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.booking-history h2 {
+  margin-bottom: 1rem;
+}
+
+.booking-item {
+  border-bottom: 1px solid #ddd;
+  padding: 1rem 0;
+}
+
+.booking-item p {
+  margin: 0.3rem 0;
+}

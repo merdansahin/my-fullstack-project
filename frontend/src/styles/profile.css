@@ -1,0 +1,29 @@
+.profile-page {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.profile-page h2 {
+  margin-bottom: 1rem;
+}
+
+.profile-page p {
+  margin: 0.5rem 0;
+}
+
+.profile-page button {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background: #1e1e2f;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.profile-page button:hover {
+  background: #f39c12;
+}

@@ -1,0 +1,264 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Hotel Booking API",
+    "version": "1.0.0",
+    "description": "MERN Hotel Booking System API Documentation",
+
+    "license": {
+      "name": "ISC",
+      "url": "https://opensource.org/licenses/ISC"
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+
+  "servers": [
+    {
+      "url": "https://otel-projeniz-backend.onrender.com/api",
+      "description": "Production server (Onrender)"
+    },
+    {
+      "url": "https://otel-backend.onrender.com/api",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/rooms": {
+      "get": {
+        "operationId": "getRooms",
+        "summary": "Get all rooms",
+        "tags": ["Rooms"],
+        "responses": {
+          "200": { "description": "List of rooms" },
+          "400": { "description": "Bad Request - Invalid query parameters" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "post": {
+        "operationId": "createRoom",
+        "summary": "Create a new room",
+        "tags": ["Rooms"],
+        "responses": {
+          "201": { "description": "Room created" },
+          "400": { "description": "Invalid input" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/rooms/{id}": {
+      "get": {
+        "operationId": "getRoomById",
+        "summary": "Get room by ID",
+        "tags": ["Rooms"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Room details" },
+          "404": { "description": "Room not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "put": {
+        "operationId": "updateRoom",
+        "summary": "Update room by ID",
+        "tags": ["Rooms"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Room updated" },
+          "404": { "description": "Room not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteRoom",
+        "summary": "Delete room by ID",
+        "tags": ["Rooms"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Room deleted" },
+          "404": { "description": "Room not found" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/bookings": {
+      "get": {
+        "operationId": "getBookings",
+        "summary": "Get all bookings",
+        "tags": ["Bookings"],
+
+        "responses": {
+          "200": { "description": "List of bookings" },
+          "400": { "description": "Bad Request - Invalid query parameters" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "post": {
+        "operationId": "createBooking",
+        "summary": "Create a new booking",
+        "tags": ["Bookings"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": { "type": "string" },
+                  "roomId": { "type": "string" },
+                  "checkIn": { "type": "string", "format": "date" },
+                  "checkOut": { "type": "string", "format": "date" }
+                },
+                "required": ["userId", "roomId", "checkIn", "checkOut"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Booking created" },
+          "400": { "description": "Room not available or invalid input" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/bookings/{id}": {
+      "get": {
+        "operationId": "getBookingById",
+        "summary": "Get booking by ID",
+        "tags": ["Bookings"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking details" },
+          "404": { "description": "Booking not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "delete": {
+        "operationId": "deleteBooking",
+        "summary": "Delete booking by ID",
+        "tags": ["Bookings"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Booking deleted" },
+          "404": { "description": "Booking not found" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/users/register": {
+      "post": {
+        "operationId": "registerUser",
+        "summary": "Register a new user",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "format": "password" }
+                },
+                "required": ["name", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User registered" },
+          "400": { "description": "User already exists or invalid input" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "operationId": "loginUser",
+        "summary": "Login user",
+        "tags": ["Users"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "format": "password" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful, returns JWT token" },
+          "401": { "description": "Invalid credentials" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/users/profile": {
+      "get": {
+        "operationId": "getUserProfile",
+        "summary": "Get user profile",
+        "tags": ["Users"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User profile data" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Server error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
