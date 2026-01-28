@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import api from "../api/api";
+import { fetchRooms } from "../services/roomService.js";
 import RoomCard from "../components/RoomCard";
 import "../styles/rooms.css";
 
@@ -12,12 +12,20 @@ function Rooms() {
   const [sortOption, setSortOption] = useState("");
 
   useEffect(() => {
-    const fetchRooms = async () => {
-      const res = await api.get("api/rooms");
-      setRooms(res.data);
-      setFilteredRooms(res.data);
+    const loadRooms = async () => {
+      try {
+        const res = await fetchRooms("/rooms");
+        const roomsData = res?.data || [];
+        setRooms(roomsData);
+        setFilteredRooms(roomsData);
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+        setRooms([]);
+        setFilteredRooms([]);
+      }
     };
-    fetchRooms();
+
+    loadRooms(); // sadece bir kez çağrılır
   }, []);
 
   // Filtreleme
@@ -57,6 +65,13 @@ function Rooms() {
   return (
     <div className="rooms-page">
       <h2>Available Rooms</h2>
+      {(filteredRooms || []).length === 0 ? (
+        <p>No rooms found.</p>
+      ) : (
+        (filteredRooms || []).map((room) => (
+          <RoomCard key={room._id} room={room} />
+        ))
+      )}
 
       {/* Filtreleme Formu */}
       <div className="filter-section">

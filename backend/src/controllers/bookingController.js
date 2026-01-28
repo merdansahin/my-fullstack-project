@@ -1,5 +1,5 @@
-import Booking from "../../models/Booking.js";
-import Room from "../../models/Rooms.js";
+import Booking from "../db/models/booking.js";
+import Room from "../db/models/room.js";
 
 // Yeni rezervasyon oluştur
 export const createBooking = async (req, res) => {

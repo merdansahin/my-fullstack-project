@@ -1,6 +1,6 @@
 import express from "express";
 import upload from "../middlewares/upload.js";
-import Room from "../models/Room.js";
+import Room from "../db/models/room.js";
 
 const router = express.Router();
 

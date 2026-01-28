@@ -6,18 +6,27 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      minlength: [2, "Name must be at least 2 characters"],
     },
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
+      trim: true,
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email"],
     },
     password: {
       type: String,
       required: true,
+      minlength: [6, "Password must be at least 6 characters"],
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
   },
+
   { timestamps: true },
 );
 
