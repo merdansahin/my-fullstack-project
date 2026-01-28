@@ -13,7 +13,6 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/profile", getUserProfile);
 
-/*
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -78,5 +77,5 @@ router.post("/logout", (req, res) => {
 });
 router.get("/profile", getUserProfile);
 //router.put("/profile", updateUserProfile);
-*/
+
 export default router;
