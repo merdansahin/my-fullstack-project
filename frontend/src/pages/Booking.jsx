@@ -30,7 +30,7 @@ function Booking() {
 
         setRooms(fetchedRooms);
       } catch (err) {
-        console.error("Error fetching rooms:", err);
+        // Odalar yüklenirken hata oluştu (Sessizce geçiliyor)
       }
     };
     fetchRooms();
@@ -75,10 +75,6 @@ function Booking() {
         navigate("/profile"); // Redirect to profile/history page after successful operation
       }, 2000);
     } catch (err) {
-      console.error(
-        "Booking Error Detail:",
-        JSON.stringify(err.response?.data, null, 2),
-      ); // Log the error detail to the console
       // If the token has expired (401), alert the user and redirect to login
       if (err.response && err.response.status === 401) {
         alert("Your session has expired. Please log in again.");

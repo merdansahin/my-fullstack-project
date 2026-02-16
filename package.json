@@ -3,6 +3,7 @@
     "cloudinary": "^1.41.3",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
-    "styled-components": "^6.3.8"
+    "styled-components": "^6.3.8",
+    "swagger-ui-express": "^5.0.1"
   }
 }
