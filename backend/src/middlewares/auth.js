@@ -18,6 +18,9 @@ const auth = (req, res, next) => {
     req.user = decoded; // Kullanıcı bilgilerini request objesine ekle
     next();
   } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired" });
+    }
     res.status(401).json({ message: "Invalid token" });
   }
 };

@@ -1,9 +1,11 @@
 .contact-page {
-  max-width: 600px;
+  width: 90%; /* Mobile */
   margin: 2rem auto;
-  padding: 2rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-
 .contact-form {
   display: flex;
   flex-direction: column;
@@ -17,17 +19,36 @@
   border-radius: 5px;
   resize: none;
   outline: none;
+  width: 100%;
 }
 
 .contact-form button {
-  background: #1e1e2f;
+  background: #007bff;
   color: #fff;
   padding: 0.8rem;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin: 1rem 0;
+  width: 100%;
 }
 
 .contact-form button:hover {
   background: #f39c12;
+  color: #fff;
+}
+
+@media (min-width: 600px) {
+  .contact-page {
+    max-width: 600px;
+    padding: 2rem;
+  }
+  .contact-form input,
+  .contact-form textarea {
+    width: auto;
+  }
+  .contact-form button {
+    width: auto;
+    margin: 1.5rem 9rem;
+  }
 }

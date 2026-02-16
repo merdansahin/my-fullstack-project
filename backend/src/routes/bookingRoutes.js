@@ -1,13 +1,17 @@
 import express from "express";
-import { protect } from "../middlewares/authMiddleware.js";
-import booking from "../db/models/booking.js";
+import auth from "../middlewares/auth.js";
+import { ctrlWrapper } from "../utils/ctrlWrapper.js";
+import {
+  createBooking,
+  getUserBookings,
+} from "../controllers/bookingController.js";
 
 const router = express.Router();
 
-// Korunan route
-router.post("/", protect, (req, res) => {
-  // Burada sadece giriş yapmış kullanıcı rezervasyon yapabilir
-  res.json({ message: "Booking created successfully", user: req.user });
-});
+// Yeni rezervasyon oluştur
+router.post("/", auth, ctrlWrapper(createBooking));
+
+// Kullanıcının rezervasyonlarını getir
+router.get("/", auth, ctrlWrapper(getUserBookings));
 
 export default router;

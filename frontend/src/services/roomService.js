@@ -3,18 +3,34 @@ import api from "../api/axios"; // axios instance
 export const fetchRooms = async () => {
   try {
     const response = await api.get("/rooms");
-    return response.data; // odaları döndür
+    return response.data; // return rooms
   } catch (error) {
     if (error.response) {
-      // Sunucu cevap verdi ama hata kodu döndü (örneğin 404, 500)
-      console.error("Sunucu hatası:", error.response.data);
+      // The server responded, but with an error code (e.g., 404, 500)
+      console.error("Server error:", error.response.data);
     } else if (error.request) {
-      // İstek gönderildi ama cevap alınamadı
-      console.error("Sunucuya ulaşılamıyor:", error.message);
+      // The request was sent, but no response was received
+      console.error("Cannot reach server:", error.message);
     } else {
-      // İstek gönderilemedi (axios config hatası vs.)
-      console.error("İstek yapılamadı:", error.message);
+      // The request could not be sent (axios config error, etc.)
+      console.error("Request failed:", error.message);
     }
-    return []; // hata durumunda boş dizi döndür
+    return []; // return an empty array in case of an error
+  }
+};
+
+export const getRoomById = async (id) => {
+  try {
+    const response = await api.get(`/rooms/${id}`);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error(`Error fetching room ${id}:`, error.response.data);
+    } else if (error.request) {
+      console.error("Server not responding:", error.message);
+    } else {
+      console.error("Request setup error:", error.message);
+    }
+    return null;
   }
 };

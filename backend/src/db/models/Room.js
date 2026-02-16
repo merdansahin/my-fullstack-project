@@ -22,14 +22,11 @@ const roomSchema = new mongoose.Schema(
     },
     images: [
       {
-        type: String, // URL veya dosya yolu
+        public_id: { type: String },
+        url: { type: String },
       },
     ],
-    amenities: [
-      {
-        type: String, // Örn: "Free WiFi", "Shuttle Service"
-      },
-    ],
+    amenities: [String],
     available: {
       type: Boolean,
       default: true,

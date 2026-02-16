@@ -1,39 +1,37 @@
 import express from "express";
+import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 import upload from "../middlewares/upload.js";
-import Room from "../db/models/room.js";
+import auth from "../middlewares/auth.js";
+import { admin } from "../middlewares/adminMiddleware.js";
+import {
+  getRooms,
+  getRoomById,
+  createRoom,
+  updateRoom,
+  deleteRoom,
+} from "../controllers/roomController.js";
 
 const router = express.Router();
 
-// Yeni oda ekleme (resim upload ile)
-router.post("/", upload.single("image"), async (req, res) => {
-  try {
-    const room = new Room({
-      name: req.body.name,
-      price: req.body.price,
-      imageUrl: req.file.path, // Cloudinary URL
-    });
-    await room.save();
-    res.json(room);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Tüm odaları listeleme (Sayfalama ile)
+router.get("/", ctrlWrapper(getRooms));
 
-// Tüm odaları listeleme
-router.get("/", async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+// Tek oda getir
+router.get("/:id", ctrlWrapper(getRoomById));
 
-  const skip = (page - 1) * limit;
-  const rooms = await Room.find().skip(skip).limit(limit);
+// Yeni oda ekleme (Admin/Auth + Resim Upload)
+router.post("/", auth, admin, upload.single("image"), ctrlWrapper(createRoom));
 
-  const total = await Room.countDocuments();
+// Oda güncelleme
+router.put(
+  "/:id",
+  auth,
+  admin,
+  upload.single("image"),
+  ctrlWrapper(updateRoom),
+);
 
-  res.json({
-    rooms,
-    total,
-    page,
-    totalPages: Math.ceil(total / limit),
-  });
-});
+// Oda silme
+router.delete("/:id", auth, admin, ctrlWrapper(deleteRoom));
+
 export default router;

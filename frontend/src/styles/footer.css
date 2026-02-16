@@ -7,9 +7,9 @@
 }
 .footer-links {
   display: flex;
-  flex-direction: row;
+  flex-direction: column; /* Mobile: Vertical */
   justify-content: center;
-  gap: 20px;
+  gap: 10px;
   list-style: none;
   border: 1px solid white;
 }
@@ -17,4 +17,11 @@
   color: white;
   text-decoration: none;
   font-weight: bold;
+}
+
+@media (min-width: 600px) {
+  .footer-links {
+    flex-direction: row;
+    gap: 20px;
+  }
 }

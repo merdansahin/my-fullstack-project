@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchRooms } from "../services/roomService.js";
+import axios from "axios";
 import RoomCard from "../components/RoomCard";
 import "../styles/rooms.css";
 
@@ -14,8 +14,8 @@ function Rooms() {
   useEffect(() => {
     const loadRooms = async () => {
       try {
-        const res = await fetchRooms("/rooms");
-        const roomsData = res?.data || [];
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/rooms`);
+        const roomsData = res.data.rooms || [];
         setRooms(roomsData);
         setFilteredRooms(roomsData);
       } catch (error) {
@@ -25,10 +25,10 @@ function Rooms() {
       }
     };
 
-    loadRooms(); // sadece bir kez çağrılır
+    loadRooms(); // called only once
   }, []);
 
-  // Filtreleme
+  // Filtering
   const handleFilter = () => {
     let filtered = [...rooms];
 
@@ -43,10 +43,10 @@ function Rooms() {
     }
 
     setFilteredRooms(filtered);
-    handleSort(sortOption, filtered); // filtre sonrası sıralama da uygula
+    handleSort(sortOption, filtered); // also apply sorting after filtering
   };
 
-  // Sıralama
+  // Sorting
   const handleSort = (option, data = filteredRooms) => {
     let sorted = [...data];
     if (option === "priceAsc") {
@@ -65,15 +65,8 @@ function Rooms() {
   return (
     <div className="rooms-page">
       <h2>Available Rooms</h2>
-      {(filteredRooms || []).length === 0 ? (
-        <p>No rooms found.</p>
-      ) : (
-        (filteredRooms || []).map((room) => (
-          <RoomCard key={room._id} room={room} />
-        ))
-      )}
 
-      {/* Filtreleme Formu */}
+      {/* Filter Form */}
       <div className="filter-section">
         <input
           type="number"
@@ -89,13 +82,14 @@ function Rooms() {
         />
         <select value={roomType} onChange={(e) => setRoomType(e.target.value)}>
           <option value="">All Types</option>
-          <option value="single">Single</option>
-          <option value="double">Double</option>
-          <option value="suite">Suite</option>
+          <option value="Single">Single</option>
+          <option value="Double Deluxe">Double Deluxe</option>
+          <option value="Family Deluxe">Family Deluxe</option>
+          <option value="Presidential Deluxe">Presidential Deluxe</option>
         </select>
       </div>
 
-      {/* Sıralama */}
+      {/* Sorting */}
       <div className="sort-section">
         <select value={sortOption} onChange={(e) => handleSort(e.target.value)}>
           <option value="">Sort By</option>
@@ -104,15 +98,17 @@ function Rooms() {
           <option value="nameAsc">Name: A-Z</option>
           <option value="nameDesc">Name: Z-A</option>
         </select>
+        <button onClick={handleFilter}>Apply Filters</button>
       </div>
 
-      {/* Oda Listesi */}
+      {/* Room List */}
       <div className="rooms-list">
-        {filteredRooms.map((room) => (
-          <RoomCard key={room._id} room={room} />
-        ))}
+        {(filteredRooms || []).length === 0 ? (
+          <p>No rooms found matching your criteria.</p>
+        ) : (
+          filteredRooms.map((room) => <RoomCard key={room._id} room={room} />)
+        )}
       </div>
-      <button onClick={handleFilter}>Apply Filters</button>
     </div>
   );
 }

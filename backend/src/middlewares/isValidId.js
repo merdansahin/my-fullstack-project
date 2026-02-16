@@ -2,10 +2,10 @@ import createHttpError from "http-errors";
 import mongoose from "mongoose";
 
 export const isValidId = (req, res, next) => {
-  const { contactId } = req.params;
+  const { id, contactId } = req.params;
 
-  if (!mongoose.isValidObjectId(contactId)) {
-    next(createHttpError(400, "Invalid ID"));
+  if (!mongoose.isValidObjectId(id || contactId)) {
+    next(createHttpError(400, "Geçersiz ID"));
     return;
   }
 

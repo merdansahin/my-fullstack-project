@@ -1,23 +1,37 @@
 .profile-page {
-  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  width: 90%; /* Mobile */
+  height: auto;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
   margin: 2rem auto;
-  padding: 2rem;
+  padding: 1rem;
   background: #f9f9f9;
   border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .profile-page h2 {
+  display: flex;
+  width: 100%;
   margin-bottom: 1rem;
+  justify-content: center;
 }
 
 .profile-page p {
+  display: flex;
+  width: 100%;
   margin: 0.5rem 0;
+  justify-content: center;
 }
 
 .profile-page button {
-  margin-top: 1rem;
+  margin-top: 2rem;
   padding: 0.8rem;
-  background: #1e1e2f;
+  width: 100%; /* Mobile */
+  background: #007bff;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -26,4 +40,20 @@
 
 .profile-page button:hover {
   background: #f39c12;
+}
+
+@media (min-width: 600px) {
+  .profile-page {
+    max-width: 500px;
+    padding: 2rem;
+  }
+  .profile-page h2,
+  .profile-page p {
+    width: 300px;
+    justify-content: flex-start;
+    margin-left: 100px;
+  }
+  .profile-page button {
+    width: 200px;
+  }
 }

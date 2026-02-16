@@ -1,70 +1,45 @@
-import Booking from "../db/models/booking.js";
-import Room from "../db/models/room.js";
+import {
+  createBookingService,
+  getUserBookingsService,
+} from "../services/booking.js";
 
-// Yeni rezervasyon oluştur
-export const createBooking = async (req, res) => {
-  try {
-    const { userId, roomId, checkIn, checkOut } = req.body;
+// Create a new booking
+export const createBooking = async (req, res, next) => {
+  const { roomId, startDate, endDate } = req.body;
 
-    // Oda mevcut mu kontrol et
-    const room = await Room.findById(roomId);
-    if (!room || !room.available) {
-      return res.status(400).json({ message: "Room not available" });
-    }
-
-    const booking = new Booking({
-      user: userId,
-      room: roomId,
-      checkIn,
-      checkOut,
+  if (!roomId || !startDate || !endDate) {
+    return res.status(400).json({
+      message:
+        "Missing information: roomId, startDate, and endDate are required.",
     });
+  }
 
-    await booking.save();
-
+  try {
+    const booking = await createBookingService({
+      userId: req.user.id,
+      roomId,
+      startDate,
+      endDate,
+    });
     res.status(201).json({ message: "Booking created successfully", booking });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
-// Tüm rezervasyonları getir
-export const getBookings = async (req, res) => {
-  try {
-    const bookings = await Booking.find().populate("room").populate("user");
-    res.status(200).json(bookings);
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
-// Tek rezervasyonu getir
-export const getBookingById = async (req, res) => {
-  try {
-    const booking = await Booking.findById(req.params.id)
-      .populate("room")
-      .populate("user");
-
-    if (!booking) {
-      return res.status(404).json({ message: "Booking not found" });
+    if (
+      error.message === "Room not found" ||
+      error.message.includes("price") ||
+      error.message.includes("date")
+    ) {
+      return res.status(400).json({ message: error.message });
     }
-
-    res.status(200).json(booking);
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    next(error);
   }
 };
 
-// Rezervasyonu sil
-export const deleteBooking = async (req, res) => {
+// Get user's bookings
+export const getUserBookings = async (req, res, next) => {
   try {
-    const booking = await Booking.findByIdAndDelete(req.params.id);
-
-    if (!booking) {
-      return res.status(404).json({ message: "Booking not found" });
-    }
-
-    res.status(200).json({ message: "Booking deleted successfully" });
+    const bookings = await getUserBookingsService(req.user.id, req.user.role);
+    res.json(bookings);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    next(error);
   }
 };

@@ -1,16 +1,50 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchBookings } from "../redux/slices/bookingSlice";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { logout } from "../redux/slices/userSlice";
 import BookingCard from "../components/BookingCard";
 import "../styles/bookingHistory.css";
 
 function BookingHistory() {
-  const { bookings, loading, error } = useSelector((state) => state.booking);
+  const { token } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchBookings());
-  }, [dispatch]);
+    const fetchMyBookings = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/bookings`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        setBookings(res.data);
+      } catch (err) {
+        console.error("Booking fetch error:", err);
+        setError(err.response?.data?.message || "Error fetching bookings");
+        if (err.response?.status === 401) {
+          alert("Oturum süreniz doldu. Lütfen tekrar giriş yapın.");
+          dispatch(logout());
+          localStorage.removeItem("token");
+          navigate("/login");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (token) {
+      fetchMyBookings();
+    } else {
+      setLoading(false);
+    }
+  }, [token, dispatch, navigate]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -21,27 +55,13 @@ function BookingHistory() {
       <h2>My Bookings</h2>
       <div className="booking-list">
         {bookings.map((booking) => (
-          <BookingCard key={booking._id} booking={booking} />
+          <BookingCard
+            className="booking-card"
+            key={booking._id}
+            booking={booking}
+          />
         ))}
       </div>
-
-      <ul>
-        {bookings.map((booking) => (
-          <li key={booking._id} className="booking-item">
-            <p>
-              <strong>Room:</strong> {booking.roomId?.name || booking.roomId}
-            </p>
-            <p>
-              <strong>Check-In:</strong>{" "}
-              {new Date(booking.checkIn).toLocaleDateString()}
-            </p>
-            <p>
-              <strong>Check-Out:</strong>{" "}
-              {new Date(booking.checkOut).toLocaleDateString()}
-            </p>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }

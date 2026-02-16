@@ -1,79 +1,102 @@
-import User from "../db/models/user.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import {
+  registerUserService,
+  loginUserService,
+  getUserProfileService,
+  refreshUserTokenService,
+} from "../services/auth.js";
 
-export const register = async (req, res) => {
+// Register
+export const register = async (req, res, next) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
   try {
-    console.log("Register request body:", req.body);
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All fields are required" });
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Please provide a valid email" });
-    }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res
-        .status(409)
-        .json({ success: false, message: "Email already in use" });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const newUser = new User({
+    const { user, accessToken } = await registerUserService({
       name,
-      email: email.toLowerCase().trim(),
-      password: hashedPassword,
+      email,
+      password,
     });
-
-    await newUser.save();
-
-    const token = jwt.sign(
-      { userId: newUser._id, email: newUser.email },
-      process.env.JWT_SECRET || "your_jwt_secret",
-      {
-        expiresIn: "7d",
-      },
-    );
 
     res.status(201).json({
       success: true,
       message: "User registered successfully",
-      user: { id: newUser._id, name: newUser.name, email: newUser.email },
-      token,
+      user: { id: user._id, name: user.name, email: user.email },
+      token: accessToken, // Frontend için token eklendi
+      accessToken,
     });
   } catch (error) {
-    console.error("Error during registration:", error);
-    if (error.code === 11000) {
-      return res
-        .status(409)
-        .json({ success: false, message: "Email already in use" });
+    if (error.message === "User already exists") {
+      return res.status(400).json({ message: error.message });
     }
+    // Diğer tüm hataları merkezi hata yöneticisine gönder
+    next(error);
   }
-
-  if (error.name === "ValidationError") {
-    const messages = Object.values(error.errors).map((val) => val.message);
-    return res
-      .status(400)
-      .json({ success: false, message: messages.join(", ") });
-  }
-
-  res.status(500).json({
-    success: false,
-    message: "Server error during registration",
-    error: error.message,
-  });
 };
-exports.test = (req, res) => {
-  res.json({ success: true, message: "Auth controller is working!" });
+
+// Login
+export const login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required" });
+  }
+
+  try {
+    const { user, accessToken, refreshToken } = await loginUserService({
+      email,
+      password,
+    });
+
+    res.json({
+      success: true,
+      message: "Login successful",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      token: accessToken, // Frontend uyumluluğu için eklendi
+      accessToken,
+      refreshToken,
+    });
+  } catch (error) {
+    if (error.message === "Invalid credentials") {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+    // Diğer tüm hataları merkezi hata yöneticisine gönder
+    next(error);
+  }
+};
+
+// Logout
+export const logout = (req, res) => {
+  // Note: This is a stateless logout. For a stateful one, you'd manage a token blacklist.
+  res.status(200).json({ success: true, message: "Logged out successfully" });
+};
+
+// Profile
+export const getProfile = async (req, res) => {
+  const user = await getUserProfileService(req.user.id);
+  if (!user) return res.status(404).json({ message: "User not found" });
+  res.json(user);
+};
+export const refreshAccessToken = async (req, res, next) => {
+  const { refreshToken } = req.body;
+
+  try {
+    const { accessToken } = await refreshUserTokenService(refreshToken);
+    res.json({ accessToken });
+  } catch (error) {
+    if (
+      error.message === "No refresh token provided" ||
+      error.message === "User not found"
+    ) {
+      return res.status(401).json({ message: error.message });
+    }
+
+    next(error);
+  }
 };

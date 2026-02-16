@@ -1,20 +1,24 @@
 import { Schema, model } from "mongoose";
 
-const contactSchema = new Schema(
+const contactMessageSchema = new Schema(
   {
-    name: { type: String, required: true },
-    phoneNumber: { type: String, required: true },
-    email: { type: String, default: "" },
-    isFavourite: { type: Boolean, default: false },
-    contactType: {
+    name: {
       type: String,
-      enum: ["work", "home", "personal"],
-      required: true,
-      default: "personal",
+      required: [true, "Name is required"],
     },
-    photo: { type: String, default: "" },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email"],
+    },
+    message: {
+      type: String,
+      required: [true, "Message is required"],
+    },
   },
   { timestamps: true, versionKey: false },
 );
 
-export const Contact = model("contacts", contactSchema);
+const Contact = model("ContactMessage", contactMessageSchema);
+
+export default Contact;

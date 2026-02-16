@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
 import { loginSuccess } from "../redux/slices/userSlice";
 import "../styles/login.css";
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,6 +24,7 @@ function Login() {
       dispatch(loginSuccess({ user: res.data.user, token: res.data.token }));
       localStorage.setItem("token", res.data.token);
       alert("Login successful!");
+      navigate("/"); // Başarılı girişten sonra anasayfaya yönlendir
     } catch (error) {
       alert("Invalid credentials");
     }
@@ -49,6 +52,9 @@ function Login() {
         />
         <button type="submit">Login</button>
       </form>
+      <p style={{ marginTop: "10px", textAlign: "center" }}>
+        Don't have an account? <Link to="/register">Register</Link>
+      </p>
     </div>
   );
 }

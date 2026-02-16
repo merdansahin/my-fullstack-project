@@ -1,5 +1,7 @@
+/*
 .admin-panel-rooms {
   max-width: 800px;
+  height: 100vh;
   margin: 2rem auto;
   padding: 2rem;
   background: #f9f9f9;
@@ -90,9 +92,7 @@
 .admin-panel-rooms li button:last-of-type:hover {
   background: #c82333;
 }
-/* Önceki stiller burada... */
 
-/* Responsive tasarım */
 @media (max-width: 768px) {
   .admin-panel-rooms {
     padding: 1rem;
@@ -133,3 +133,4 @@
     font-size: 0.9rem;
   }
 }
+*/

@@ -1,18 +1,39 @@
 import express from "express";
+import { ctrlWrapper } from "../utils/ctrlWrapper.js";
+import { isValidId } from "../middlewares/isValidId.js";
+import auth from "../middlewares/auth.js"; // Admin koruması için
+import { admin } from "../middlewares/adminMiddleware.js"; // Admin koruması için
+import {
+  createContactMessage,
+  getAllContactMessages,
+  getContactMessageById,
+  deleteContactMessage,
+} from "../controllers/contactController.js";
 
 const router = express.Router();
 
-router.post("/", (req, res) => {
-  const { name, email, message } = req.body;
+// Yeni bir iletişim mesajı gönder (Herkese açık)
+router.post("/", ctrlWrapper(createContactMessage));
 
-  if (!name || !email || !message) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
+// Tüm iletişim mesajlarını listele (Sadece Admin)
+router.get("/", auth, admin, ctrlWrapper(getAllContactMessages));
 
-  // Burada email servisi veya DB kaydı yapılabilir
-  console.log("New contact message:", { name, email, message });
+// Belirli bir iletişim mesajını getir (Sadece Admin)
+router.get(
+  "/:contactId",
+  auth,
+  admin,
+  isValidId,
+  ctrlWrapper(getContactMessageById),
+);
 
-  res.status(200).json({ message: "Message received successfully" });
-});
+// Bir iletişim mesajını sil (Sadece Admin)
+router.delete(
+  "/:contactId",
+  auth,
+  admin,
+  isValidId,
+  ctrlWrapper(deleteContactMessage),
+);
 
 export default router;

@@ -8,6 +8,6 @@ export const validateBody = (schema) => async (req, res, next) => {
     });
     next();
   } catch (err) {
-    next(createHttpError(400, err.errors?.join(", ") || "Validation error"));
+    next(createHttpError(400, err.errors?.join(", ") || "Doğrulama hatası"));
   }
 };

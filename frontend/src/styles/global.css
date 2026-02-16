@@ -1,27 +1,19 @@
-/* Global CSS Stil Dosyası */
+/* Global CSS Style File */
 body {
   margin: 0;
   font-family: "Roboto", sans-serif;
 }
 
-/* Navbar ve Footer için responsive düzen */
-.navbar,
-.footer {
-  padding: 1rem 2rem;
-}
-/* Navbar */
+/* Navbar Basic Settings */
 .navbar {
   display: flex;
   justify-content: space-between;
+  width: auto;
   align-items: center;
-  background: #1e1e2f;
-  padding: 1rem 2rem;
+  background: #004e64; /* Main color */
+  padding: 1rem 1rem;
+  position: relative;
   color: #fff;
-}
-
-.footer-links {
-  flex-direction: column;
-  gap: 0.5rem;
 }
 
 .logo {
@@ -29,35 +21,87 @@ body {
   font-weight: bold;
 }
 
+/* Links (Mobile Default) */
 .nav-links {
   list-style: none;
+  display: none; /* Hidden by default on mobile */
+  flex-direction: column;
+  width: 100%;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #004e64;
+  align-items: center;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  gap: 1rem;
+}
+
+.nav-links.active {
   display: flex;
-  gap: 1.5rem;
 }
 
 .nav-links a {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 0.5rem 0;
   color: #fff;
   text-decoration: none;
   transition: color 0.3s;
+  font-weight: 500;
 }
 
 .nav-links a:hover {
-  color: #f39c12;
-}
-/* Mobil menü */
-.menu-toggle {
-  display: none;
-  font-size: 2rem;
-  cursor: pointer;
+  color: #ffd166;
 }
 
-/* Hero */
+/* Menu Toggle (Hamburger) - Visible on mobile */
+.menu-toggle {
+  display: block;
+  font-size: 1.8rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: white;
+}
+
+/* Logout Button Style */
+.logout-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  width: 100%; /* Full width on mobile */
+  max-width: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s;
+  margin: 0.5rem 0;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
+}
+
+/* User Name Style */
+.user-name {
+  color: #ffd166;
+  font-weight: bold;
+  margin: 0 0;
+}
+/*  Booking  Style */
+
+/* Hero Section */
 .hero {
   text-align: center;
   padding: 4rem 2rem;
   background: linear-gradient(to right, #1e1e2f, #3c3c5c);
   color: #fff;
 }
+
 .hero button {
   margin-top: 1rem;
   padding: 0.8rem 1.5rem;
@@ -79,7 +123,8 @@ body {
   background: #1e1e2f;
   color: #fff;
 }
-/* Ortak modal stilleri */
+
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -104,7 +149,7 @@ body {
 .modal h2 {
   margin-bottom: 1rem;
   font-size: 1.5rem;
-  color: #0077b6; /* deniz mavisi */
+  color: #0077b6;
   text-align: center;
 }
 
@@ -155,92 +200,40 @@ body {
     transform: translateY(0);
   }
 }
-.menu-toggle {
-  display: none;
-  font-size: 1.8rem;
-  cursor: pointer;
-  background: none;
-  border: none;
-  color: white;
-}
 
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #004e64;
-  padding: 1rem 2rem;
-  position: relative;
-}
-
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.nav-links a {
-  color: white;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.nav-links a:hover {
-  color: #ffd166;
-}
-
-/* Mobil görünüm */
-@media (max-width: 768px) {
+/* --- DESKTOP SETTINGS --- */
+@media (min-width: 769px) {
   .menu-toggle {
-    display: block;
+    display: none;
   }
 
   .nav-links {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: #004e64;
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    position: static;
+    width: auto;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    gap: 1.5rem;
     align-items: center;
-    display: none;
   }
 
-  .nav-links.active {
-    display: flex;
-  }
-}
-/* Mobil cihazlar için */
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    background: #1e1e2f;
-    position: absolute;
-    top: 60px;
-    right: 0;
-    width: 200px;
-    padding: 1rem;
+  .nav-links a {
+    width: auto;
+    display: inline-block;
+    white-space: nowrap;
   }
 
-  .nav-links.active {
-    display: flex;
+  .logout-btn {
+    width: auto;
+    max-width: 100px;
+    margin-left: 10px;
+    margin-top: 0;
   }
 
-  .menu-toggle {
-    display: block;
-  }
-}
-
-/* Tablet için */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .nav-links {
-    gap: 1rem;
-  }
-}
-
-/* Masaüstü için */
-@media (min-width: 1025px) {
-  .nav-links {
-    gap: 2rem;
+  .user-name {
+    margin-right: 10px;
+    margin-bottom: 0;
   }
 }

@@ -1,9 +1,9 @@
 .register-page {
   display: flex;
   flex-direction: column;
-  width: 500px;
-  height: 500px;
-  margin: 3rem auto;
+  width: 90%; /* Mobile */
+  height: auto;
+  margin: 2rem auto;
   padding: 2rem;
   background: #f9f9f9;
   border-radius: 8px;
@@ -36,4 +36,12 @@ button {
   cursor: pointer;
   outline: none;
   width: 100%;
+}
+
+@media (min-width: 600px) {
+  .register-page {
+    width: 500px;
+    height: 500px;
+    margin: 3rem auto;
+  }
 }

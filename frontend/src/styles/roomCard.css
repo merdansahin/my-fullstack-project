@@ -1,0 +1,34 @@
+.room-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  height: auto;
+}
+
+.room-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0.5rem;
+  width: 100%;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.room-info button {
+  margin-left: 0;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .room-info {
+    padding: 1rem;
+  }
+  .room-info button {
+    width: auto;
+  }
+}

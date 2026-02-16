@@ -1,10 +1,10 @@
 .login-page {
   display: flex;
   flex-direction: column;
-  width: 500px;
-  height: 400px;
-  margin: 3rem auto;
-  padding: 2rem;
+  width: 90%; /* Mobile */
+  height: auto;
+  margin: 2rem auto;
+  padding: 1.5rem;
   background: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -18,15 +18,37 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   outline: none;
-  width: 480px;
+  width: 100%; /* Mobile */
+  box-sizing: border-box;
 }
-button {
-  background: #1e1e2f;
+.login-page button {
+  background: #007bff;
   color: #fff;
   padding: 0.8rem;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   outline: none;
-  width: 100%;
+  width: 100%; /* Mobile */
+  margin: 1rem 0;
+}
+
+.login-page button:hover {
+  background: #f39c12;
+}
+
+@media (min-width: 600px) {
+  .login-page {
+    width: 500px;
+    height: 400px;
+    margin: 3rem auto;
+    padding: 2rem;
+  }
+  .login-page input {
+    width: 480px;
+  }
+  .login-page button {
+    width: 300px;
+    margin: 2rem 6rem;
+  }
 }

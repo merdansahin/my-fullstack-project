@@ -1,73 +1,130 @@
+import createError from "http-errors";
 import Room from "../db/models/room.js";
+import {
+  getAllRoomsService,
+  getRoomByIdService,
+  createRoomService,
+  updateRoomService,
+  deleteRoomService,
+} from "../services/room.js";
 
-// Tüm odaları getir
+// Get all rooms (with pagination)
 export const getRooms = async (req, res) => {
-  try {
-    const rooms = await Room.find();
-    res.status(200).json(rooms);
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 100; // Default limit is high for the admin panel
+  const skip = (page - 1) * limit;
+
+  const rooms = await getAllRoomsService().skip(skip).limit(limit);
+  const total = await Room.countDocuments();
+
+  res.json({
+    rooms,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  });
 };
 
-// Tek oda getir
+// Get a single room by ID
 export const getRoomById = async (req, res) => {
-  try {
-    const room = await Room.findById(req.params.id);
-    if (!room) {
-      return res.status(404).json({ message: "Room not found" });
-    }
-    res.status(200).json(room);
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+  const { id } = req.params;
+  const room = await getRoomByIdService(id);
+  if (!room) {
+    throw createError(404, "Room not found");
   }
+  res.json(room);
 };
 
-// Yeni oda oluştur
+// Create a new room
 export const createRoom = async (req, res) => {
-  try {
-    const { name, type, price, description, amenities, images } = req.body;
+  console.log("=== ADD ROOM REQUEST ===");
+  console.log("Body:", req.body);
+  console.log("File:", req.file);
 
-    const room = new Room({
-      name,
-      type,
-      price,
-      description,
-      amenities,
-      images,
-    });
+  const { name, type, price, description, amenities } = req.body;
 
-    await room.save();
-    res.status(201).json({ message: "Room created successfully", room });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+  if (!name || !price) {
+    throw createError(400, "Name and price are required");
   }
+
+  // Convert amenities string from frontend to array
+  let parsedAmenities = [];
+  if (amenities) {
+    parsedAmenities = Array.isArray(amenities)
+      ? amenities
+      : amenities.split(",").map((item) => item.trim());
+  }
+
+  const roomData = {
+    name,
+    type,
+    price,
+    description,
+    amenities: parsedAmenities,
+  };
+
+  // If an image was uploaded, add its path
+  if (req.file) {
+    console.log("Cloudinary Upload Successful:", req.file.path || req.file.url);
+    roomData.images = [
+      {
+        public_id: req.file.filename || req.file.public_id,
+        url: req.file.path || req.file.url || req.file.secure_url,
+      },
+    ];
+  }
+
+  const newRoom = await createRoomService(roomData);
+  res.status(201).json(newRoom);
 };
 
-// Oda güncelle
+// Update room
 export const updateRoom = async (req, res) => {
-  try {
-    const room = await Room.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!room) {
-      return res.status(404).json({ message: "Room not found" });
-    }
-    res.status(200).json({ message: "Room updated successfully", room });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+  console.log("=== UPDATE ROOM REQUEST ===");
+  console.log("Body:", req.body);
+  console.log("File:", req.file);
+
+  const { id } = req.params;
+  const { name, type, price, description, amenities } = req.body;
+
+  const updateData = {};
+  if (name) updateData.name = name;
+  if (type) updateData.type = type;
+  if (price) updateData.price = price;
+  if (description) updateData.description = description;
+
+  if (amenities !== undefined) {
+    updateData.amenities = Array.isArray(amenities)
+      ? amenities
+      : amenities.split(",").map((item) => item.trim());
   }
+
+  if (req.file) {
+    console.log(
+      "Cloudinary Upload Successful (Update):",
+      req.file.path || req.file.url,
+    );
+    updateData.images = [
+      {
+        public_id: req.file.filename || req.file.public_id,
+        url: req.file.path || req.file.url || req.file.secure_url,
+      },
+    ];
+  }
+
+  const room = await updateRoomService(id, updateData);
+  if (!room) {
+    throw createError(404, "Room not found");
+  }
+  res.json(room);
 };
 
-// Oda sil
+// Delete room
 export const deleteRoom = async (req, res) => {
-  try {
-    const room = await Room.findByIdAndDelete(req.params.id);
-    if (!room) {
-      return res.status(404).json({ message: "Room not found" });
-    }
-    res.status(200).json({ message: "Room deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+  const { id } = req.params;
+  const room = await deleteRoomService(id);
+  if (!room) {
+    throw createError(404, "Room not found");
   }
+  res.json({ message: "Room deleted successfully" });
 };
