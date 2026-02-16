@@ -18,6 +18,10 @@
 
   "servers": [
     {
+      "url": "https://my-fullstack-project-nu.vercel.app/api",
+      "description": "Production server (Vercel)"
+    },
+    {
       "url": "https://otel-projeniz-backend.onrender.com/api",
       "description": "Production server (Onrender)"
     },
